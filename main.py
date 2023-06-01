@@ -1,48 +1,57 @@
-import collections
-import itertools
+import tkinter as tk
+from tkinter import messagebox
+import igraph as ig
+from tqdm import tqdm
 
-def create_graph(words):
-    def neighbors(word):
-        for i in range(len(word)):
-            yield word[:i] + word[i+1:]  # Rimuovere una lettera
-            for c in 'abcdefghijklmnopqrstuvwxyz':
-                yield word[:i] + c + word[i:]  # Aggiungere una lettera
-                yield word[:i] + c + word[i+1:]  # Cambiare una lettera
-        for c in 'abcdefghijklmnopqrstuvwxyz':
-            yield word + c  # Aggiungere una lettera alla fine
+class MyGUI:
 
-    def anagrams(word):
-        return ("".join(perm) for perm in itertools.permutations(word))
+    def __init__(self):
+        self.root = tk.Tk()
 
-    graph = collections.defaultdict(set)
-    for word in words:
-        word = word.lower()
-        for neigh in neighbors(word):
-            if neigh in words:
-                graph[word].add(neigh)
-        for anagram in anagrams(word):
-            if anagram in words and anagram != word:
-                graph[word].add(anagram)
-    return graph
+        self.root.geometry("800x300")
+        self.root.title("ProgettoIUM Python")
 
-def shortest_path(graph, start, end):
-    queue = collections.deque([[start]])
-    seen = set([start])
+        self.border_color = tk.Frame(self.root, background="red")
 
-    while queue:
-        path = queue.popleft()
-        vertex = path[-1]
-        yield path
-        for neighbor in graph[vertex]:
-            if neighbor not in seen:
-                seen.add(neighbor)
-                queue.append(path + [neighbor])
+        self.label = tk.Label(self.root, text="Python GUI", font=('Helvetica Bold', 20))
+        self.label.pack(padx=10, pady=10)
 
-words = ['casa', 'casta', 'costa', 'costo', 'cosmo']  # Lista delle parole
-graph = create_graph(words)
-path_generator = shortest_path(graph, 'casa', 'cosmo')
+        self.label_word1 = tk.Label(self.root, text="Insert first word:", font=('Arial', 16))
+        self.label_word1.pack(ipadx=3)
 
-for path in path_generator:
-    if path[-1] == 'cosmo':
-        print(' -> '.join(path))
-        break
+        self.textbox1 = tk.Entry(self.root, width=250, font=('Arial', 16))
+        self.textbox1.pack(padx=10, pady=10)
+
+        self.label_word2 = tk.Label(self.root, text="Insert second word:", font=('Arial', 16))
+        self.label_word2.pack(ipadx=3)
+
+        self.textbox2 = tk.Entry(self.root, width=400, font=('Arial', 16))
+        self.textbox2.pack(padx=10, pady=10)
+
+        self.button = tk.Button(self.root, text="INVIA", font=('Arial', 18), command=self.save_strings)
+        self.button.pack(padx=10, pady=10)
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.root.mainloop()
+
+        self.root.mainloop()
+
+    def save_strings(self):
+        word1 = self.textbox1.get()
+        word2 = self.textbox2.get()
+        print("parola1 inserita: ", word1)
+        print("parola2 inserita: ", word2)
+
+    def remove(string, index):
+        #rimuove il carattere in posizione index della stringa e restituisce una nuova stringa senza il carattere rimosso
+        return string[:index] + string[index+1:]
+
+    def add(string, character, index):
+        return string[:index] + character + string[index:]
+
+    def on_closing(self):
+        if messagebox.askyesno(title="Quit?", message="Do you really want to quit"):
+            self.root.destroy()
+
+MyGUI()
+
