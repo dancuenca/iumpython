@@ -1,11 +1,15 @@
 import tkinter as tk
 
-root = tk.Tk()
+def mostra_contenuto_array(array):
+    root = tk.Tk()
+    root.title("Contenuto dell'array")
 
-button1 = tk.Button(root, text="Pulsante 1")
-button1.pack(padx=10, pady=5)
+    # Creazione di un widget Label per visualizzare il contenuto dell'array
+    label = tk.Label(root, text="\n".join(array))
+    label.pack()
 
-button2 = tk.Button(root, text="Pulsante 2")
-button2.pack(padx=10, pady=5)
+    root.mainloop()
 
-root.mainloop()
+# Esempio di utilizzo
+array = ['Elemento 1', 'Elemento 2', 'Elemento 3']
+mostra_contenuto_array(array)

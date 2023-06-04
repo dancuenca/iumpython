@@ -13,7 +13,6 @@ def addLetter(string,char,index):
 def sub(string,oldchar_index,newchar):
     return string[:oldchar_index] + newchar + string[oldchar_index+1:]
 
-
 def links(words,word):
     a = 'abcdefghijklmnopqrstuwxyz'
     edges = []
@@ -31,11 +30,11 @@ def links(words,word):
                 edges.append((word,newWord))
                 costs.append(3)
                 ops.append("sub")
-        newWord = rem(word, index)
-        if newWord in words:
-            edges.append((word,newWord))
-            costs.append(2)
-            ops.append("rem")
+            newWord = rem(word, index)
+            if newWord in words:
+                edges.append((word,newWord))
+                costs.append(2)
+                ops.append("rem")
     return edges, costs, ops
 
 
