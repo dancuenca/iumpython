@@ -65,55 +65,30 @@ def attach_file_to_read():
         state_attaching_label.configure(text="File attached is not valid!", text_color="red")
 
 # Read attached file and save it in array
-#def read_file():
-#    words = set()
-#    f = open(file_path, 'r')
-#    progressbar_label.pack(padx=10)
-#    progressbar.pack(padx=20)
-#    progressbar.start()
-#    while True:
-#        line = f.readline()
-#        if not line:
-#            break
-#        word = line.strip()
-#        words.add(word)
-#    f.close()
-#    progressbar.stop()
-#    progressbar.pack_forget()
-#    return words
-
-#def create_graph(words):
-#    graph = ig.Graph(directed = True)
-#    graph.add_vertices(list(words))
-#    edges = []
-#    costs = []
-#    operations = []
-
-#    for word in words:
-#        element = links(words, word)
-#        edges += element[0]
-#        costs += element[1]
-#        operations += element[2]
-
-#    graph.add_edges(edges)
-#    graph.es["name"] = operations
-
-#    return graph
+def read_file():
+    words = set()
+    try:
+        f = open(file_path, 'r')
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            word = line.strip()
+            words.add(word)
+        f.close()
+    except:
+        state_attaching_label.configure(text="File attached is not valid!", text_color="red")
+    return words
 
 def run_program():
-    print("word1: ", entry_word1.get())
-    print("word2: ", entry_word2.get())
+    # Save inputs in variable
     word1 = entry_word1.get()
     word2 = entry_word2.get()
-    words = set()
-    f = open(file_path, 'r')
-    while True:
-        line = f.readline()
-        if not line:
-            break
-        word = line.strip()
-        words.add(word)
-    f.close()
+
+    # Save attached file in array
+    words = read_file()
+
+    # Create graph
     graph = ig.Graph(directed = True)
     graph.add_vertices(list(words))
     edges = []
@@ -128,6 +103,8 @@ def run_program():
             pbar.update(1)
     graph.add_edges(edges)
     graph.es["name"] = operations
+
+    # Print path from word1 to word2
     print_path(graph, costs, word1, word2)
 
 
@@ -137,7 +114,7 @@ customtkinter.set_default_color_theme("blue")
 
 # App frame
 app = customtkinter.CTk()
-app.geometry("720x480")
+app.geometry("1020x780")
 app.title("Progetto IUM Python-GUI")
 
 # Adding UI Elements
