@@ -1,8 +1,14 @@
 import tkinter
+from tkinter import *
+from tkinter import ttk
 import customtkinter
 from customtkinter import filedialog
 import igraph as ig
 from tqdm import tqdm
+
+# Prova a caso progress bar
+def step():
+    my_progress['value'] += 20
 
 # Functions for data elaborations
 def add(string, char, index):
@@ -40,6 +46,7 @@ def links(words,word):
 
 
 def print_path(graph, costs, word1, word2):
+    global res
     val = graph.get_shortest_paths(word1, word2, costs, "out", "epath")
     val1 = graph.get_shortest_paths(word1, word2, costs, "out", "vpath")
     val = val[0]
@@ -50,11 +57,13 @@ def print_path(graph, costs, word1, word2):
             stringa = stringa + graph.vs[val1[cnt]]["name"]+"-"+graph.es[val[cnt]]["name"]+"->"
         else:
             stringa = stringa + graph.vs[val1[cnt]]["name"]
-    print(stringa+" "+str(graph.distances(word1, word2, costs, "out")[0][0]))
 
+    res = stringa+" "+ str(graph.distances(word1, word2, costs, "out")[0][0])
+    return res
 
 # Functions for GUI
 file_path = ""
+res = ""
 
 def attach_file_to_read():
     global file_path
@@ -105,7 +114,15 @@ def run_program():
     graph.es["name"] = operations
 
     # Print path from word1 to word2
-    print_path(graph, costs, word1, word2)
+    final_result = print_path(graph, costs, word1, word2)
+
+    progressbar_label.pack(padx=10)
+    my_progress.pack(pady=20)
+    my_button.pack()
+
+    result.configure(text=final_result, text_color="green")
+    result.pack(padx=30, pady=50)
+
 
 
 # System Settings
@@ -155,6 +172,16 @@ progressbar_label = customtkinter.CTkLabel(app, text="Loading...", font=('Roboto
 # Progress bar (initially invisible)
 progressbar = customtkinter.CTkProgressBar(app)
 #progressbar.pack(padx=20)
+
+#Prova a caso progress bar ####################################
+
+my_progress = ttk.Progressbar(app, orient=HORIZONTAL, length=300, mode='determinate')
+#my_progress.pack(pady=20)
+
+my_button = Button(app, text="Progress", command=step)
+#my_button.pack()
+
+result = customtkinter.CTkLabel(app, text=res, font=('Roboto', 20))
 
 # Run App
 app.mainloop()
