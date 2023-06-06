@@ -1,15 +1,26 @@
-import tkinter as tk
+# Import the required libraries
+from tkinter import *
+from tkinter import ttk
 
-def mostra_contenuto_array(array):
-    root = tk.Tk()
-    root.title("Contenuto dell'array")
+# Create an instance of tkinter frame
+win = Tk()
 
-    # Creazione di un widget Label per visualizzare il contenuto dell'array
-    label = tk.Label(root, text="\n".join(array))
-    label.pack()
+# Set the size of the tkinter window
+win.geometry("700x350")
 
-    root.mainloop()
+# Define a function to show/hide widget
+def show_widget():
+   label.pack()
+def hide_widget():
+   label.pack_forget()
+   b1.configure(text="Show", command=show_widget)
 
-# Esempio di utilizzo
-array = ['Elemento 1', 'Elemento 2', 'Elemento 3']
-mostra_contenuto_array(array)
+# Add a label widget
+label = ttk.Label(win, text="Eat, Sleep, Code and Repeat", font=('Aerial 11'))
+label.pack(pady=30)
+
+# Add a Button widget
+b1 = ttk.Button(win, text="Hide", command=hide_widget)
+b1.pack(pady=20)
+
+win.mainloop()

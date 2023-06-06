@@ -1,6 +1,5 @@
 import igraph as ig
 from tqdm import tqdm
-import tkinter as tk
 import time
 
 def rem(string, index):
@@ -78,5 +77,3 @@ graph.es["name"] = ops
 word1 = str(input("prima parola: "))
 word2 = str(input("seconda parola: "))
 printPath(word1,word2)
-
-window = tk.Tk()
