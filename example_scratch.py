@@ -1,26 +1,24 @@
-# Import the required libraries
-from tkinter import *
-from tkinter import ttk
+with tqdm(total=len(words)) as pbar:
+    index = 1
+    for word in words:
+        el = links(words, word)
+        edges += el[0]
+        costs += el[1]
+        operations += el[2]
+        pbar.update(1)
+        index += 1
 
-# Create an instance of tkinter frame
-win = Tk()
+        if index % update_interval == 0:
+            progress_bar['value'] = (index / len(words)) * 100
+            app.update()
 
-# Set the size of the tkinter window
-win.geometry("700x350")
+    for word in words:
+        el = links(words, word)
+        edges += el[0]
+        costs += el[1]
+        operations += el[2]
+        index += 1
 
-# Define a function to show/hide widget
-def show_widget():
-   label.pack()
-def hide_widget():
-   label.pack_forget()
-   b1.configure(text="Show", command=show_widget)
-
-# Add a label widget
-label = ttk.Label(win, text="Eat, Sleep, Code and Repeat", font=('Aerial 11'))
-label.pack(pady=30)
-
-# Add a Button widget
-b1 = ttk.Button(win, text="Hide", command=hide_widget)
-b1.pack(pady=20)
-
-win.mainloop()
+        if index % update_interval == 0:
+            progress_bar['value'] = (index / len(words)) * 100
+            app.update()

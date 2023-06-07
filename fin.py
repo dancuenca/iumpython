@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 # Prova a caso progress bar
 def step():
-    my_progress['value'] += 20
+    progress_bar['value'] += 20
 
 # Functions for data elaborations
 def add(string, char, index):
@@ -69,7 +69,7 @@ def attach_file_to_read():
     global file_path
     try:
         file_path = filedialog.askopenfilename(filetypes=[('Text file', '*.txt')])
-        state_attaching_label.configure(text="Attached file: "+ file_path.title(), text_color="green")
+        state_attaching_label.configure(text="Attached file: " + file_path.title(), text_color="green")
     except:
         state_attaching_label.configure(text="File attached is not valid!", text_color="red")
 
@@ -94,6 +94,10 @@ def run_program():
     word1 = entry_word1.get()
     word2 = entry_word2.get()
 
+    progressbar_label.pack(padx=10)
+    progress_bar.pack(pady=20)
+    app.update()
+
     # Save attached file in array
     words = read_file()
 
@@ -103,26 +107,32 @@ def run_program():
     edges = []
     costs = []
     operations = []
-    with tqdm(total=len(words)) as pbar:
-        for word in words:
-            el = links(words, word)
-            edges += el[0]
-            costs += el[1]
-            operations += el[2]
-            pbar.update(1)
+
+    update_interval = int(len(words) / 10)
+    index = 1
+
+    for word in words:
+        el = links(words, word)
+        edges += el[0]
+        costs += el[1]
+        operations += el[2]
+        index += 1
+
+        if index % update_interval == 0:
+            progress_bar['value'] = (index / len(words)) * 100
+            app.update()
+
+    progressbar_label.configure(text="Done!", text_color="green")
+    progress_bar.pack_forget()
+
     graph.add_edges(edges)
     graph.es["name"] = operations
 
     # Print path from word1 to word2
     final_result = print_path(graph, costs, word1, word2)
 
-    progressbar_label.pack(padx=10)
-    my_progress.pack(pady=20)
-    my_button.pack()
-
     result.configure(text=final_result, text_color="green")
     result.pack(padx=30, pady=50)
-
 
 
 # System Settings
@@ -131,7 +141,7 @@ customtkinter.set_default_color_theme("blue")
 
 # App frame
 app = customtkinter.CTk()
-app.geometry("1020x780")
+app.geometry("1020x480")
 app.title("Progetto IUM Python-GUI")
 
 # Adding UI Elements
@@ -167,19 +177,11 @@ send_button.pack(pady=20, padx=10)
 
 # Label "loading" for progress bar
 progressbar_label = customtkinter.CTkLabel(app, text="Loading...", font=('Roboto', 12))
-#progressbar_label.pack(padx=10)
-
-# Progress bar (initially invisible)
-progressbar = customtkinter.CTkProgressBar(app)
-#progressbar.pack(padx=20)
 
 #Prova a caso progress bar ####################################
 
-my_progress = ttk.Progressbar(app, orient=HORIZONTAL, length=300, mode='determinate')
-#my_progress.pack(pady=20)
-
-my_button = Button(app, text="Progress", command=step)
-#my_button.pack()
+progress_bar = ttk.Progressbar(app, orient=HORIZONTAL, length=300, mode='determinate')
+#progress_bar.pack(pady=20)
 
 result = customtkinter.CTkLabel(app, text=res, font=('Roboto', 20))
 

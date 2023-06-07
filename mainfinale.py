@@ -53,7 +53,7 @@ def printPath(word1,word2):
 
 words = set()
 graph = ig.Graph(directed = True)
-f = open('wordsita.txt','r')
+f = open('words.txt','r')
 while True:
     line = f.readline()
     if not line:
