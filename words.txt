@@ -4,6 +4,7 @@ bambino
 borsa
 caffè
 cane
+castello
 delfino
 dolce
 esercizio
@@ -22,6 +23,7 @@ ketchup
 kilo
 lago
 lampada
+martello
 mela
 montagna
 nido

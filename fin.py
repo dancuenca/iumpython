@@ -1,69 +1,72 @@
-import tkinter
-from tkinter import *
-from tkinter import ttk
 import customtkinter
+from CTkMessagebox import CTkMessagebox
 from customtkinter import filedialog
 import igraph as ig
-from tqdm import tqdm
-
-# Prova a caso progress bar
-def step():
-    progress_bar['value'] += 20
 
 # Functions for data elaborations
 def add(string, char, index):
     return string[:index] + char + string[index:]
 
+
 def substitute(string, oldchar_index, newchar):
     return string[:oldchar_index] + newchar + string[oldchar_index+1:]
+
 
 def remove(string, index):
     return string[:index] + string[index+1:]
 
-def links(words,word):
-    a = 'abcdefghijklmnopqrstuwxyz'
+
+def links(words, word):
+    alphabet = 'abcdefghijklmnopqrstuwxyz'
     edges = []
     costs = []
-    ops = []
+    operations = []
     for index in range(len(word)):
-        for letter in a:
-            newWord = add(word, letter, index)
-            if newWord in words:
-                edges.append((word,newWord))
+        for letter in alphabet:
+            new_word = add(word, letter, index)
+            if new_word in words:
+                edges.append((word, new_word))
                 costs.append(2)
-                ops.append("add")
-            newWord = substitute(word,index,letter)
-            if newWord in words:
-                edges.append((word,newWord))
+                operations.append("add")
+            new_word = substitute(word, index, letter)
+            if new_word in words:
+                edges.append((word, new_word))
                 costs.append(3)
-                ops.append("sub")
-            newWord = remove(word, index)
-            if newWord in words:
-                edges.append((word,newWord))
+                operations.append("sub")
+            new_word = remove(word, index)
+            if new_word in words:
+                edges.append((word, new_word))
                 costs.append(2)
-                ops.append("rem")
-    return edges, costs, ops
+                operations.append("rem")
+    return edges, costs, operations
 
-
-def print_path(graph, costs, word1, word2):
-    global res
-    val = graph.get_shortest_paths(word1, word2, costs, "out", "epath")
-    val1 = graph.get_shortest_paths(word1, word2, costs, "out", "vpath")
-    val = val[0]
-    val1 = val1[0]
-    stringa = ""
-    for cnt in range(int(len(val1))):
-        if cnt < int(len(val)):
-            stringa = stringa + graph.vs[val1[cnt]]["name"]+"-"+graph.es[val[cnt]]["name"]+"->"
-        else:
-            stringa = stringa + graph.vs[val1[cnt]]["name"]
-
-    res = stringa+" "+ str(graph.distances(word1, word2, costs, "out")[0][0])
-    return res
 
 # Functions for GUI
 file_path = ""
 res = ""
+
+
+def print_path(graph, costs, word1, word2):
+    global res
+
+    try:
+        val = graph.get_shortest_paths(word1, word2, costs, "out", "epath")
+        val1 = graph.get_shortest_paths(word1, word2, costs, "out", "vpath")
+    except:
+        progressbar_label.configure(text="Words entered are not contained in the attached file!", text_color="red")
+
+    val = val[0]
+    val1 = val1[0]
+    temp = ""
+    for cnt in range(int(len(val1))):
+        if cnt < int(len(val)):
+            temp += graph.vs[val1[cnt]]["name"]+"-"+graph.es[val[cnt]]["name"]+"->"
+        else:
+            temp += graph.vs[val1[cnt]]["name"]
+
+    res = temp + " " + str(graph.distances(word1, word2, costs, "out")[0][0])
+    return res
+
 
 def attach_file_to_read():
     global file_path
@@ -72,6 +75,7 @@ def attach_file_to_read():
         state_attaching_label.configure(text="Attached file: " + file_path.title(), text_color="green")
     except:
         state_attaching_label.configure(text="File attached is not valid!", text_color="red")
+
 
 # Read attached file and save it in array
 def read_file():
@@ -86,23 +90,28 @@ def read_file():
             words.add(word)
         f.close()
     except:
-        state_attaching_label.configure(text="File attached is not valid!", text_color="red")
+        progressbar_label.configure(text="File attached is not valid!", text_color="red")
     return words
+
+
+def is_words_in_array(word1, word2, words):
+    words_set = set(words)
+    return word1 in words_set and word2 in words_set
+
 
 def run_program():
     # Save inputs in variable
     word1 = entry_word1.get()
     word2 = entry_word2.get()
 
+    words = read_file()
+
     progressbar_label.pack(padx=10)
     progress_bar.pack(pady=20)
     app.update()
 
-    # Save attached file in array
-    words = read_file()
-
     # Create graph
-    graph = ig.Graph(directed = True)
+    graph = ig.Graph(directed=True)
     graph.add_vertices(list(words))
     edges = []
     costs = []
@@ -119,10 +128,10 @@ def run_program():
         index += 1
 
         if index % update_interval == 0:
-            progress_bar['value'] = (index / len(words)) * 100
+            progress_bar.set(index / len(words))
             app.update()
 
-    progressbar_label.configure(text="Done!", text_color="green")
+    progressbar_label.configure(text="Done!", text_color="green", font=('Roboto', 20))
     progress_bar.pack_forget()
 
     graph.add_edges(edges)
@@ -131,8 +140,8 @@ def run_program():
     # Print path from word1 to word2
     final_result = print_path(graph, costs, word1, word2)
 
-    result.configure(text=final_result, text_color="green")
-    result.pack(padx=30, pady=50)
+    res = CTkMessagebox(app, title="Result", message=final_result)
+    res.pack()
 
 
 # System Settings
@@ -141,7 +150,7 @@ customtkinter.set_default_color_theme("blue")
 
 # App frame
 app = customtkinter.CTk()
-app.geometry("1020x480")
+app.geometry("820x780")
 app.title("Progetto IUM Python-GUI")
 
 # Adding UI Elements
@@ -178,11 +187,11 @@ send_button.pack(pady=20, padx=10)
 # Label "loading" for progress bar
 progressbar_label = customtkinter.CTkLabel(app, text="Loading...", font=('Roboto', 12))
 
-#Prova a caso progress bar ####################################
+# Progress bar
+progress_bar = customtkinter.CTkProgressBar(app, width=300, mode="determinate")
+progress_bar.set(0)
 
-progress_bar = ttk.Progressbar(app, orient=HORIZONTAL, length=300, mode='determinate')
-#progress_bar.pack(pady=20)
-
+# Final output Result
 result = customtkinter.CTkLabel(app, text=res, font=('Roboto', 20))
 
 # Run App
