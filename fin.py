@@ -27,17 +27,17 @@ def links(words, word):
             if new_word in words:
                 edges.append((word, new_word))
                 costs.append(2)
-                operations.append("add")
+                operations.append("addition")
             new_word = substitute(word, index, letter)
             if new_word in words:
                 edges.append((word, new_word))
                 costs.append(3)
-                operations.append("sub")
+                operations.append("replacement")
             new_word = remove(word, index)
             if new_word in words:
                 edges.append((word, new_word))
                 costs.append(2)
-                operations.append("rem")
+                operations.append("removal")
     return edges, costs, operations
 
 
@@ -47,6 +47,7 @@ res = ""
 
 
 def print_path(graph, costs, word1, word2):
+    result_path = []
     global res
 
     try:
@@ -60,11 +61,11 @@ def print_path(graph, costs, word1, word2):
     temp = ""
     for cnt in range(int(len(val1))):
         if cnt < int(len(val)):
-            temp += graph.vs[val1[cnt]]["name"]+"-"+graph.es[val[cnt]]["name"]+"->"
+            temp += graph.vs[val1[cnt]]["name"]+"\n-> "+graph.es[val[cnt]]["name"]+"\n"
         else:
             temp += graph.vs[val1[cnt]]["name"]
 
-    res = temp + " " + str(graph.distances(word1, word2, costs, "out")[0][0])
+    res = temp + "\nRules weight: " + str(graph.distances(word1, word2, costs, "out")[0][0])
     return res
 
 
@@ -140,8 +141,7 @@ def run_program():
     # Print path from word1 to word2
     final_result = print_path(graph, costs, word1, word2)
 
-    res = CTkMessagebox(app, title="Result", message=final_result)
-    res.pack()
+    CTkMessagebox(app, title="Result", message=final_result, icon="check")
 
 
 # System Settings
@@ -150,7 +150,7 @@ customtkinter.set_default_color_theme("blue")
 
 # App frame
 app = customtkinter.CTk()
-app.geometry("820x780")
+app.geometry("820x580")
 app.title("Progetto IUM Python-GUI")
 
 # Adding UI Elements

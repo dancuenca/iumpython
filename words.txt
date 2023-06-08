@@ -16,6 +16,7 @@ giardino
 hotel
 hamburger
 isola
+isole
 istruzione
 juventus
 judo
