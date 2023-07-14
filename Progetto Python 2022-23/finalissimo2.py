@@ -77,6 +77,43 @@ def attach_file_to_read():
     except:
         state_attaching_label.configure(text="File attached is not valid!", text_color="red")
 
+    words = read_file()
+
+    progressbar_label.pack(padx=10)
+    progress_bar.pack(pady=20)
+    app.update()
+
+    # Create graph
+    global graph
+    global edges
+    global costs
+    global operations
+    graph = ig.Graph(directed=True)
+    graph.add_vertices(list(words))
+    edges = []
+    costs = []
+    operations = []
+
+    update_interval = int(len(words) / 10)
+    index = 1
+
+    for word in words:
+        el = links(words, word)
+        edges += el[0]
+        costs += el[1]
+        operations += el[2]
+        index += 1
+
+        if index % update_interval == 0:
+            progress_bar.set(index / len(words))
+            app.update()
+
+    progressbar_label.configure(text="Done!", text_color="green", font=('Roboto', 20))
+    progress_bar.pack_forget()
+
+    graph.add_edges(edges)
+    graph.es["name"] = operations
+
 
 # Read attached file and save it in array
 def read_file():
@@ -104,39 +141,6 @@ def run_program():
     # Save inputs in variable
     word1 = entry_word1.get()
     word2 = entry_word2.get()
-
-    words = read_file()
-
-    progressbar_label.pack(padx=10)
-    progress_bar.pack(pady=20)
-    app.update()
-
-    # Create graph
-    graph = ig.Graph(directed=True)
-    graph.add_vertices(list(words))
-    edges = []
-    costs = []
-    operations = []
-
-    update_interval = int(len(words) / 10)
-    index = 1
-
-    for word in words:
-        el = links(words, word)
-        edges += el[0]
-        costs += el[1]
-        operations += el[2]
-        index += 1
-
-        if index % update_interval == 0:
-            progress_bar.set(index / len(words))
-            app.update()
-
-    progressbar_label.configure(text="Done!", text_color="green", font=('Roboto', 20))
-    progress_bar.pack_forget()
-
-    graph.add_edges(edges)
-    graph.es["name"] = operations
 
     # Print path from word1 to word2
     final_result = print_path(graph, costs, word1, word2)
